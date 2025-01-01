@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class OptionSelector<T extends Enum> extends StatelessWidget {
+class OptionSelector<T extends String> extends StatelessWidget {
   final List<T> options;
   final String Function(T) getDescription;
   final Set<T> selectedOptions;

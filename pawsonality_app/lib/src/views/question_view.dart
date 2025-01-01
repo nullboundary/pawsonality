@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 
-import 'package:pawsonality_app/src/controllers/ei_controller.dart';
+import 'package:pawsonality_app/src/controllers/question_controller.dart';
 import 'package:pawsonality_app/src/widgets/option_selector.dart';
+import 'package:pawsonality_app/src/infrastructure/models/question_model.dart';
 
-class OnboardGoal extends StatefulWidget {
+class QuestionView extends StatefulWidget {
+  final int index;
+  final List<Question> questions;
   final PageController pageController;
-  final GoalFilterController controller;
-  const OnboardGoal({required this.pageController, required this.controller, super.key});
+  final QuestionController controller;
+  const QuestionView(
+      {required this.index,
+      required this.questions,
+      required this.pageController,
+      required this.controller,
+      super.key});
 
   @override
-  State<OnboardGoal> createState() => _OnboardGoalState();
+  State<QuestionView> createState() => _QuestionViewState();
 }
 
-class _OnboardGoalState extends State<OnboardGoal> {
+class _QuestionViewState extends State<QuestionView> {
   @override
   Widget build(BuildContext context) {
+    final currentQuestion = widget.questions[widget.index];
+
     return Container(
       padding: const EdgeInsets.all(32.0),
       color: const Color(0xFFF2F0DB),
@@ -23,8 +33,8 @@ class _OnboardGoalState extends State<OnboardGoal> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Spacer(),
-          const Text(
-            'What do you hope to achieve? ',
+          Text(
+            currentQuestion.questionTitle,
             style: TextStyle(
                 color: Color(0xFF45423F),
                 fontSize: 28.0,
@@ -33,19 +43,19 @@ class _OnboardGoalState extends State<OnboardGoal> {
                 fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 16.0),
-          const Text(
-            'Let’s get to know your goals in becoming a Land Steward.',
+          Text(
+            currentQuestion.questionText,
             style: TextStyle(color: Color(0xFF45423F), fontFamily: 'AvantGarde LT', fontSize: 16.0),
           ),
           const SizedBox(height: 16.0),
-          OptionSelector<GoalFilterTypes>(
-            options: GoalFilterTypes.values,
-            getDescription: widget.controller.getEnumDescription,
-            selectedOptions: widget.controller.selectedFilters,
+          OptionSelector<String>(
+            options: currentQuestion.answers,
+            getDescription: (option) => currentQuestion.answerDescriptions[option] ?? 'Unknown',
+            selectedOptions: widget.controller.getFilters(currentQuestion.questionText).toSet(),
             onSelected: (option, selected) {
               setState(() {
                 if (selected) {
-                  widget.controller.selectedFilters.add(option);
+                  widget.controller.setFilters(currentQuestion.questionText, [option]);
                 } else {
                   widget.controller.selectedFilters.remove(option);
                 }
