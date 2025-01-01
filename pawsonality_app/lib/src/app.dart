@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pawsonality_app/src/screens/home.dart';
+import 'package:pawsonality_app/src/screens/mbti_quiz.dart';
 import 'package:pawsonality_app/src/screens/splash.dart';
 
 class PawsonalityApp extends StatelessWidget {
@@ -31,6 +32,7 @@ class PawsonalityApp extends StatelessWidget {
       routes: {
         '/': (context) => Splash(),
         '/home': (context) => Home(),
+        '/mbti_quiz': (context) => MbtiQuiz(),
       },
     );
   }
