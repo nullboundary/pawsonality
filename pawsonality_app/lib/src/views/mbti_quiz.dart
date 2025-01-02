@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pawsonality_app/src/controllers/question_controller.dart';
 import 'package:pawsonality_app/src/infrastructure/models/question_model.dart';
 import 'package:pawsonality_app/src/views/question_view.dart';
+import 'package:pawsonality_app/src/views/results.dart';
 
 class MbtiQuiz extends StatefulWidget {
   const MbtiQuiz({super.key});
@@ -15,6 +16,7 @@ class _OnboardState extends State<MbtiQuiz> {
   final _formKey = GlobalKey<FormState>();
   late List<Widget> pages;
   int _currentPage = 0;
+  String _mbtiType = '';
 
   final QuestionController _eiController = QuestionController();
   final QuestionController _snController = QuestionController();
@@ -39,6 +41,24 @@ class _OnboardState extends State<MbtiQuiz> {
     ];
   }
 
+  String calcSimpleMBTI(List<AnswerType> ei, List<AnswerType> sn, List<AnswerType> tf, List<AnswerType> jp) {
+    String determinePreference(List<AnswerType> dichotomy, AnswerType option1, AnswerType option2) {
+      int option1Count = dichotomy.where((answer) => answer == option1).length;
+      int option2Count = dichotomy.length - option1Count;
+      return option1Count >= option2Count
+          ? option1.name // Use the enum name (e.g., "E")
+          : option2.name; // Use the enum name (e.g., "I")
+    }
+
+    // Calculate each MBTI component
+    String eOrI = determinePreference(ei, AnswerType.E, AnswerType.I);
+    String sOrN = determinePreference(sn, AnswerType.S, AnswerType.N);
+    String tOrF = determinePreference(tf, AnswerType.T, AnswerType.F);
+    String jOrP = determinePreference(jp, AnswerType.J, AnswerType.P);
+
+    return "$eOrI$sOrN$tOrF$jOrP";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +80,17 @@ class _OnboardState extends State<MbtiQuiz> {
                     child: pages[index]);
               },
               onPageChanged: (index) {
+                print(index);
+                if (index == pages.length - 1) {
+                  _mbtiType = calcSimpleMBTI(_eiController.getAnswers(), _snController.getAnswers(),
+                      _tfController.getAnswers(), _jpController.getAnswers());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Results(mbtiResult: _mbtiType),
+                    ),
+                  );
+                }
                 setState(() {
                   _currentPage = index;
                 });

@@ -51,13 +51,20 @@ class _QuestionViewState extends State<QuestionView> {
           OptionSelector<String>(
             options: currentQuestion.answers,
             getDescription: (option) => currentQuestion.answerDescriptions[option] ?? 'Unknown',
-            selectedOptions: widget.controller.getFilters(currentQuestion.questionText).toSet(),
+            selectedOptions: {
+              if (widget.controller.getAnswer(currentQuestion.questionText) != null)
+                currentQuestion.answers[
+                    currentQuestion.answerTypes.indexOf(widget.controller.getAnswer(currentQuestion.questionText)!)]
+            },
             onSelected: (option, selected) {
               setState(() {
+                final answerIndex = currentQuestion.answers.indexOf(option);
+                final answerType = currentQuestion.answerTypes[answerIndex];
                 if (selected) {
-                  widget.controller.setFilters(currentQuestion.questionText, [option]);
+                  print('Set $answerType');
+                  widget.controller.setAnswer(currentQuestion.questionText, answerType);
                 } else {
-                  widget.controller.selectedFilters.remove(option);
+                  widget.controller.selectedAnswers.remove(option);
                 }
               });
             },
@@ -71,7 +78,7 @@ class _QuestionViewState extends State<QuestionView> {
                   backgroundColor: const Color(0xFF45423F),
                   padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 20.0),
                 ),
-                onPressed: widget.controller.selectedFilters.isNotEmpty
+                onPressed: widget.controller.selectedAnswers.isNotEmpty
                     ? () {
                         widget.pageController.nextPage(
                           duration: const Duration(milliseconds: 400),

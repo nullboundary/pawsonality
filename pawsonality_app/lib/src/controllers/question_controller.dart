@@ -1,19 +1,21 @@
+import 'package:pawsonality_app/src/infrastructure/models/question_model.dart';
+
 class QuestionController {
-  Map<String, Set<String>> selectedFilters = {};
+  Map<String, AnswerType> selectedAnswers = {};
 
-  void setFilters(String question, List<String> filters) {
-    selectedFilters[question] = filters.toSet();
+  void setAnswer(String question, AnswerType answerType) {
+    selectedAnswers[question] = answerType;
   }
 
-  void addFilter(String question, String filter) {
-    selectedFilters.putIfAbsent(question, () => {}).add(filter);
+  List<AnswerType> getAnswers() {
+    return selectedAnswers.values.toList();
   }
 
-  void removeFilter(String question, String filter) {
-    selectedFilters[question]?.remove(filter);
+  void removeAnswer(String question) {
+    selectedAnswers.remove(question);
   }
 
-  List<String> getFilters(String question) {
-    return selectedFilters[question]?.toList() ?? [];
+  AnswerType? getAnswer(String question) {
+    return selectedAnswers[question];
   }
 }
